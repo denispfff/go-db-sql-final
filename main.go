@@ -142,7 +142,8 @@ func main() {
 	err = service.Delete(p.Number)
 	if err != nil {
 		fmt.Println(err)
-		return
+		// вот тут return лишний для моей реализации функции delete т.к. при неудаче - возвращаю ошибку
+		// return
 	}
 
 	// вывод посылок клиента

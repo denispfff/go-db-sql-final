@@ -34,6 +34,7 @@ func TestAddGetDelete(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
 	require.NoError(t, err)
+	defer db.Close()
 
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -58,6 +59,7 @@ func TestAddGetDelete(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = store.Get(parcel.Number)
+	require.Error(t, err)
 	assert.ErrorIs(t, err, sql.ErrNoRows)
 }
 
@@ -66,6 +68,7 @@ func TestSetAddress(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
 	require.NoError(t, err)
+	defer db.Close()
 
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -95,6 +98,7 @@ func TestSetStatus(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
 	require.NoError(t, err)
+	defer db.Close()
 
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -123,6 +127,7 @@ func TestGetByClient(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
 	require.NoError(t, err)
+	defer db.Close()
 
 	store := NewParcelStore(db)
 

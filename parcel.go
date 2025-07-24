@@ -51,6 +51,8 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	// заполните срез Parcel данными из таблицы
 	var res []Parcel
 
@@ -58,6 +60,9 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 		p := Parcel{}
 		err := rows.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				continue // Если правильно понял - если по Client мы не нашли посылок то это не ошибка
+			}
 			return nil, err
 		}
 		res = append(res, p)
@@ -81,7 +86,7 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 
 	// не совсем понял, вернётся ли ошибка из Exec если он не повлияет ни на 1 строку, но лучше проверить:
 	if count == 0 {
-		return fmt.Errorf("SetStatus: не удалось выставить статус %s для посылки %d", status, number)
+		return fmt.Errorf("не удалось выставить статус %s для посылки %d", status, number)
 	}
 
 	return nil
@@ -109,7 +114,7 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 	}
 
 	if count == 0 {
-		return fmt.Errorf("SetAddress: не удалось сменить адрес для посылки %d", number)
+		return fmt.Errorf("не удалось сменить адрес для посылки %d", number)
 	}
 
 	return nil
@@ -133,7 +138,7 @@ func (s ParcelStore) Delete(number int) error {
 	}
 
 	if count == 0 {
-		return fmt.Errorf("Delete: не удалось удалить посылку %d", number)
+		return fmt.Errorf("не удалось удалить посылку %d", number)
 	}
 
 	return nil
